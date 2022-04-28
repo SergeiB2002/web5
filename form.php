@@ -138,7 +138,7 @@ if (!empty($messages)) {
       <?php 
        $cl_e='';
        $ch='';
-       if($values['check'] or !empty($_SESSION['login'])){
+       if($values['checkbox'] or !empty($_SESSION['login'])){
        $ch='checked';
        }
        if ($errors['checkbox']) {
@@ -147,7 +147,7 @@ if (!empty($messages)) {
        if(empty($_SESSION['login'])){
        print('
        <div  '.$cl_e.' >
-       <input name="chk" type="checkbox" '.$ch.'> Вы согласны с пользовательским соглашением <br>
+       <input name="check" type="checkbox" '.$ch.'> Я болею за Red Bull Racing <br>
        </div>');}
        ?>
 
