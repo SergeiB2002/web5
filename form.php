@@ -134,15 +134,40 @@ if (!empty($messages)) {
         <textarea name="field-bio" placeholder="Write something pls"> <?php print $values['field-bio']; ?> </textarea>
       </label><br />
 
-      Чекбокс:<br />
-      <div <?php if ($errors['checkbox']) {print 'class="error"';} ?> >
-      <label><input type="checkbox" name="checkbox"
-	<?php if($values['checkbox']==TRUE){print 'checked';} ?> />
-        Я болею за Red Bull Racing</label><br />
-      </div>
+      Чекбокс:
+      <?php 
+       $cl_e='';
+       $ch='';
+       if($values['check'] or !empty($_SESSION['login'])){
+       $ch='checked';
+       }
+       if ($errors['checkbox']) {
+       $cl_e='class="error"';
+       }
+       if(empty($_SESSION['login'])){
+       print('
+       <div  '.$cl_e.' >
+       <input name="chk" type="checkbox" '.$ch.'> Вы согласны с пользовательским соглашением <br>
+       </div>');}
+       ?>
 
       Если уверенны в своем ответе нажимайте:
       <input type="submit" value="Send" />
     </form>
+   <?php
+  if(empty($_SESSION['login'])){
+   echo'
+   <div class="login">
+    <p>Имеется аккаунт? <a href="login.php">Входите!</a></p>
+   </div>';
+  }
+  else{
+    echo '
+    <div class="logout">
+      <form action="index.php" method="post">
+        <input name="logout" type="submit" value="Выйти">
+      </form>
+    </div>';
+  } ?>
    </div>
 </body>
