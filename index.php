@@ -6,13 +6,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
   if (!empty($_COOKIE['save'])) {
     setcookie('save', '', 100000);
     setcookie('login', '', 100000);
-    setcookie('sign_in', '', 100000);
+    setcookie('pass', '', 100000);
     $messages[] = 'Спасибо, результаты сохранены.';
-    if (!empty($_COOKIE['sign_in'])) {
+    if (!empty($_COOKIE['pass'])) {
       $messages[] = sprintf('Войдите <a href="login.php">войти</a> с логином <strong>%s</strong>
         и паролем <strong>%s</strong> чтобы измененить данные.',
         strip_tags($_COOKIE['login']),
-        strip_tags($_COOKIE['sign_in']));
+        strip_tags($_COOKIE['pass']));
     }
     setcookie('name_value', '', 100000);
     setcookie('email_value', '', 100000);
