@@ -92,12 +92,46 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 
   // Если нет предыдущих ошибок ввода, есть кука сессии, начали сессию и
   // ранее в сессию записан факт успешного логина.
-  if (empty($errors) && !empty($_COOKIE[session_name()]) &&
-      session_start() && !empty($_SESSION['login'])) {
-    // TODO: загрузить данные пользователя из БД
-    // и заполнить переменную $values,
-    // предварительно санитизовав.
-    printf('Вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
+  if (!$error && !empty($_COOKIE[session_name()]) && !empty($_SESSION['login'])) {
+    $user = 'u41028';
+    $pass = '2356452';
+    $db = new PDO('mysql:host=localhost;dbname=u41028', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+    try{
+      $get=$db->prepare("SELECT * FROM application WHERE id=?");
+      $get->bindParam(1,$_SESSION['uid']);
+      $get->execute();
+      $inf=$get->fetchALL();
+      $values['field-name']=$inf[0]['name'];
+      $values['field-email']=$inf[0]['email'];
+      $values['year']=$inf[0]['year'];
+      $values['radio-pol']=$inf[0]['pol'];
+      $values['radio-limb']=$inf[0]['konech'];
+      $values['field-bio']=$inf[0]['biogr'];
+
+      $get2=$db->prepare("SELECT name FROM superp WHERE per_id=?");
+      $get2->bindParam(1,$_SESSION['uid']);
+      $get2->execute();
+      $inf2=$get2->fetchALL();
+      for($i=0;$i<count($inf2);$i++){
+        if($inf2[$i]['field-super']=='power'){
+          $values['power']=1;
+        }
+        if($inf2[$i]['field-super']=='telepat'){
+          $values['telepat']=1;
+        }
+        if($inf2[$i]['field-super']=='immortal'){
+          $values['immortal']=1;
+        }
+        if($inf2[$i]['field-super']=='noclip'){
+          $values['noclip']=1;
+        }
+      }
+    }
+    catch(PDOException $e){
+      print('Error: '.$e->getMessage());
+      exit();
+    }
+    printf('Произведен вход с логином %s, uid %d', $_SESSION['login'], $_SESSION['uid']);
   }
 
   // Включаем содержимое файла form.php.
