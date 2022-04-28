@@ -141,56 +141,138 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 }
 // Иначе, если запрос был методом POST, т.е. нужно проверить данные и сохранить их в XML-файл.
 else {
-  // Проверяем ошибки.
-  $errors = FALSE;
-  if (empty($_POST['fio'])) {
-    // Выдаем куку на день с флажком об ошибке в поле fio.
-    setcookie('fio_error', '1', time() + 24 * 60 * 60);
-    $errors = TRUE;
-  }
-  else {
-    // Сохраняем ранее введенное в форму значение на месяц.
-    setcookie('fio_value', $_POST['fio'], time() + 30 * 24 * 60 * 60);
-  }
-
-// *************
-// TODO: тут необходимо проверить правильность заполнения всех остальных полей.
-// Сохранить в Cookie признаки ошибок и значения полей.
-// *************
-
-  if ($errors) {
-    // При наличии ошибок перезагружаем страницу и завершаем работу скрипта.
+  if(!empty($_POST['logout'])){
+    session_destroy();
     header('Location: index.php');
-    exit();
   }
-  else {
-    // Удаляем Cookies с признаками ошибок.
-    setcookie('fio_error', '', 100000);
-    // TODO: тут необходимо удалить остальные Cookies.
-  }
+  else{
+    $name = $_POST['field-name'];
+    $email = $_POST['field-email'];
+    $year = $_POST['year'];
+    $pol=$_POST['radio-pol'];
+    $limbs=$_POST['radio-limb'];
+    $powers=$_POST['field-super'];
+    $bio=$_POST['field-bio'];
+    if(empty($_SESSION['login'])){
+      $check=$_POST['check'];
+    }
+    //Регулярные выражения
+    $bioregex = "/^\s*\w+[\w\s\.,-]*$/";
+    $nameregex = "/^\w+[\w\s-]*$/";
+    $mailregex = "/^[\w\.-]+@([\w-]+\.)+[\w-]{2,4}$/";
+    $errors = FALSE;
 
-  // Проверяем меняются ли ранее сохраненные данные или отправляются новые.
-  if (!empty($_COOKIE[session_name()]) &&
-      session_start() && !empty($_SESSION['login'])) {
-    // TODO: перезаписать данные в БД новыми данными,
-    // кроме логина и пароля.
-  }
-  else {
-    // Генерируем уникальный логин и пароль.
-    // TODO: сделать механизм генерации, например функциями rand(), uniquid(), md5(), substr().
-    $login = '123';
-    $pass = '123';
-    // Сохраняем в Cookies.
-    setcookie('login', $login);
-    setcookie('pass', $pass);
+    if (empty($name) || (!preg_match($nameregex,$name))) {
+      setcookie('name_error', '1', time() + 24*60 * 60);
+      setcookie('name_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('name_value', $fio, time() + 60 * 60);
+      setcookie('name_error','',100000);
+    }
 
-    // TODO: Сохранение данных формы, логина и хеш md5() пароля в базу данных.
-    // ...
-  }
+    if (empty($email) || !filter_var($email,FILTER_VALIDATE_EMAIL) ||
+     (!preg_match($mailregex,$email))) {
+      setcookie('email_error', '1', time() + 24*60 * 60);
+      setcookie('email_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('email_value', $email, time() + 60 * 60);
+      setcookie('email_error','',100000);
+    }
 
-  // Сохраняем куку с признаком успешного сохранения.
-  setcookie('save', '1');
+    if ($year=='Год') {
+      setcookie('year_error', '1', time() + 24 * 60 * 60);
+      setcookie('year_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('year_value', intval($year), time() + 60 * 60);
+      setcookie('year_error','',100000);
+    }
 
-  // Делаем перенаправление.
-  header('Location: ./');
-}
+    if (!isset($pol)) {
+      setcookie('pol_error', '1', time() + 24 * 60 * 60);
+      setcookie('pol_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('pol_value', $pol, time() + 60 * 60);
+      setcookie('pol_error','',100000);
+    }
+
+    if (!isset($limbs)) {
+      setcookie('limb_error', '1', time() + 24 * 60 * 60);
+      setcookie('limb_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('limb_value', $limbs, time() + 60 * 60);
+      setcookie('limb_error','',100000);
+    }
+
+    if (!isset($powers)) {
+      setcookie('super_error', '1', time() + 24 * 60 * 60);
+      setcookie('immortal_value', '', 100000);
+      setcookie('noclip_value', '', 100000);
+      setcookie('power_value', '', 100000);
+      setcookie('telepat_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      $apw=array(
+        "immortal_value"=>0,
+        "noclip_value"=>0,
+        "power_value"=>0,
+        "telepat_value"=>0
+      );
+    foreach($powers as $pwer){
+      if($pwer=='immortal'){setcookie('immortal_value', 1, time() + 12 * 30 * 24 * 60 * 60); $apw['immortal_value']=1;} 
+      if($pwer=='noclip'){setcookie('noclip_value', 1, time() + 12*30 * 24 * 60 * 60);$apw['noclip_value']=1;} 
+      if($pwer=='power'){setcookie('power_value', 1, time() + 12*30 * 24 * 60 * 60);$apw['power_value']=1;} 
+      if($pwer=='telepat'){setcookie('telepat_value', 1, time() + 12*30 * 24 * 60 * 60);$apw['telepat_value']=1;}
+      }
+    foreach($apw as $c=>$val){
+      if($val==0){
+        setcookie($c,'',100000);
+        }
+      }
+    }
+    
+    if ((empty($bio)) || (!preg_match($bioregex,$bio))) {
+      setcookie('bio_error', '1', time() + 24 * 60 * 60);
+      setcookie('bio_value', '', 100000);
+      $errors = TRUE;
+    }
+    else {
+      setcookie('bio_value', $bio, time() + 12 * 30 * 24 * 60 * 60);
+      setcookie('bio_error', '', 100000);
+    }
+    
+    if(empty($_SESSION['login'])){
+      if(!isset($check)){
+        setcookie('check_error','1',time()+ 24*60*60);
+        setcookie('check_value', '', 100000);
+        $errors=TRUE;
+      }
+      else{
+        setcookie('check_value',TRUE,time()+ 60*60);
+        setcookie('check_error','',100000);
+      }
+    }
+    if ($errors) {
+      setcookie('save','',100000);
+      header('Location: login.php');
+    }
+    else {
+      setcookie('name_error', '', 100000);
+      setcookie('email_error', '', 100000);
+      setcookie('year_error', '', 100000);
+      setcookie('pol_error', '', 100000);
+      setcookie('limb_error', '', 100000);
+      setcookie('super_error', '', 100000);
+      setcookie('bio_error', '', 100000);
+      setcookie('check_error', '', 100000);
+    }
