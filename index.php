@@ -305,3 +305,7 @@ else {
         $upd1->execute();
       }
     }
+    
+    header('Location: ./');
+  }
+}
