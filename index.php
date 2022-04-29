@@ -305,7 +305,48 @@ else {
         $upd1->execute();
       }
     }
-    
+    else {
+      if(!$errors){
+        $login = 'u'.substr(uniqid(),-5);
+        $pass = substr(md5(uniqid()),0,10);
+        $pass_hash=password_hash($pass,PASSWORD_DEFAULT);
+        setcookie('login', $login);
+        setcookie('pass', $pass);
+
+        try {
+          $stmt = $db->prepare("INSERT INTO application SET name=:name, email=:email, year=:byear, pol=:pol, konech=:limbs, biogr=:bio");
+          $stmt->bindParam(':name',$_POST['field-name']);
+          $stmt->bindParam(':email',$_POST['field-email']);
+          $stmt->bindParam(':byear',$_POST['year']);
+          $stmt->bindParam(':pol',$_POST['radio-pol']);
+          $stmt->bindParam(':limbs',$_POST['radio-limb']);
+          $stmt->bindParam(':bio',$_POST['field-bio']);
+          $stmt -> execute();
+
+          $id=$db->lastInsertId();
+
+          $usr=$db->prepare("INSERT INTO userinfo SET id=?,login=?,password=?");
+          $usr->bindParam(1,$id);
+          $usr->bindParam(2,$login);
+          $usr->bindParam(3,$pass_hash);
+          $usr->execute();
+
+          $pwr=$db->prepare("INSERT INTO superp SET name=:power, per_id=:id");
+          $pwr->bindParam(':id',$id);
+          foreach($_POST['power'] as $powers){
+            $pwr->bindParam(':power',$powers); 
+            $pwr->execute();  
+          }
+        }
+        catch(PDOException $e){
+          print('Error : ' . $e->getMessage());
+          exit();
+        }
+      }
+    }
+    if(!$errors){
+      setcookie('save', '1');
+    }
     header('Location: ./');
   }
 }
