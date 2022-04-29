@@ -276,3 +276,32 @@ else {
       setcookie('bio_error', '', 100000);
       setcookie('check_error', '', 100000);
     }
+    
+    $user = 'u41028';
+    $pass = '2356452';
+    $db = new PDO('mysql:host=localhost;dbname=u41028', $user, $pass, array(PDO::ATTR_PERSISTENT => true));
+    if (!empty($_COOKIE[session_name()]) && !empty($_SESSION['login']) and !$errors) {
+      $id=$_SESSION['uid'];
+      $upd=$db->prepare("UPDATE application SET name=:name, email=:email, year=:byear, pol=:pol, konech=:limbs, biogr=:bio WHERE id=:id");
+      $cols=array(
+        ':name'=>$name,
+        ':email'=>$email,
+        ':byear'=>$year,
+        ':pol'=>$pol,
+        ':limbs'=>$limbs,
+        ':bio'=>$bio
+      );
+      foreach($cols as $k=>&$v){
+        $upd->bindParam($k,$v);
+      }
+      $upd->bindParam(':id',$id);
+      $upd->execute();
+      $del=$db->prepare("DELETE FROM superp WHERE per_id=?");
+      $del->execute(array($id));
+      $upd1=$db->prepare("INSERT INTO superp SET name=:power,per_id=:id");
+      $upd1->bindParam(':id',$id);
+      foreach($powers as $pwr){
+        $upd1->bindParam(':power',$pwr);
+        $upd1->execute();
+      }
+    }
