@@ -24,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 ?>
 <style>
   .log-in{
+    font-family: "Montserrat", sans-serif;
     background-color: rgba(123, 0, 212, 0.1);
     max-width: 960px;
     text-align: center;

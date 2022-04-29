@@ -131,10 +131,10 @@ if (!empty($messages)) {
 	  
       <label>
         Биография:<br />
-        <textarea name="field-bio" placeholder="Write something pls"> <?php print $values['field-bio']; ?> </textarea>
+        <textarea name="field-bio"> <?php print $values['field-bio']; ?> </textarea>
       </label><br />
 
-      Чекбокс:
+     // Чекбокс:
       <?php 
        $cl_e='';
        $ch='';
