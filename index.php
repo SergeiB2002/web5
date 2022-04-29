@@ -113,16 +113,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
       $get2->execute();
       $inf2=$get2->fetchALL();
       for($i=0;$i<count($inf2);$i++){
-        if($inf2[$i]['field-super']=='power'){
+        if($inf2[$i]['name']=='power'){
           $values['power']=1;
         }
-        if($inf2[$i]['field-super']=='telepat'){
+        if($inf2[$i]['name']=='telepat'){
           $values['telepat']=1;
         }
-        if($inf2[$i]['field-super']=='immortal'){
+        if($inf2[$i]['name']=='immortal'){
           $values['immortal']=1;
         }
-        if($inf2[$i]['field-super']=='noclip'){
+        if($inf2[$i]['name']=='noclip'){
           $values['noclip']=1;
         }
       }
