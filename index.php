@@ -333,7 +333,7 @@ else {
 
           $pwr=$db->prepare("INSERT INTO superp SET name=:power, per_id=:id");
           $pwr->bindParam(':id',$id);
-          foreach($_POST['power'] as $powers){
+          foreach($_POST['field-super'] as $powers){
             $pwr->bindParam(':power',$powers); 
             $pwr->execute();  
           }
